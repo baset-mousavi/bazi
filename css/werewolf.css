@@ -24,3 +24,81 @@
 .ww-night-text{font-size:14px;color:var(--text-dim);line-height:1.8;max-width:320px;}
 
 .ww-night-day-actions{display:flex;flex-direction:column;gap:10px;}
+.ww-night-panel h2.ww-day-heading{color:#fff;}
+
+/* persistent alive/dead player strip, shown throughout the night screen */
+.ww-night-topbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.ww-player-strip{
+  flex:1;
+  min-width:0;
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding:2px;
+}
+.ww-player-chip{
+  flex:0 0 auto;
+  width:30px;height:30px;
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(224,179,79,.25);
+  color:var(--text);
+  font-size:13px;
+  font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.ww-player-chip.is-dead{
+  background:rgba(225,85,63,.1);
+  border-color:rgba(225,85,63,.3);
+  color:var(--text-dim);
+  text-decoration:line-through;
+  opacity:.6;
+}
+
+/* player picker grid (werewolf kill / seer check / cupid pairing / vote / poison) */
+.ww-picker-panel h2{margin:0 0 14px;font-size:16px;color:var(--gold);text-align:center;}
+.ww-picker-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(64px, 1fr));
+  gap:10px;
+}
+.ww-picker-btn{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  padding:12px 6px;
+  border-radius:14px;
+  border:1px solid rgba(224,179,79,.2);
+  background:rgba(255,255,255,.05);
+  color:var(--text);
+  font-family:inherit;
+  font-weight:700;
+  font-size:13px;
+  cursor:pointer;
+}
+.ww-picker-btn .row-icon{font-size:18px;}
+.ww-picker-btn.selected{
+  background:linear-gradient(90deg,var(--turquoise),var(--gold));
+  color:#08202a;
+  border-color:transparent;
+}
+
+.ww-witch-choice{display:flex;flex-direction:column;gap:10px;}
+
+/* seer's private role-reveal result */
+.ww-seer-result{
+  text-align:center;
+  font-size:15px;
+  font-weight:700;
+  color:var(--text);
+  background:rgba(224,179,79,.1);
+  border:1px solid rgba(224,179,79,.3);
+  border-radius:14px;
+  padding:14px;
+  margin-top:14px;
+}

@@ -378,13 +378,31 @@
 
   <!-- WEREWOLF NIGHT GUIDE -->
   <div class="screen" id="screen-werewolf-night">
-    <div class="panel ww-night-panel">
+    <div class="ww-night-topbar">
+      <div class="ww-player-strip" id="ww-player-strip"></div>
+      <button type="button" class="guess-icon-btn" id="btn-ww-mute" aria-label="صدا">🔊</button>
+    </div>
+
+    <div class="panel ww-night-panel" id="ww-narration-panel">
       <div class="ww-night-icon" id="ww-night-icon">🌙</div>
       <h2 id="ww-night-title">همه چشماشونو ببندن</h2>
       <div class="ww-night-text" id="ww-night-text"></div>
     </div>
 
+    <div class="panel ww-picker-panel" id="ww-picker-panel" style="display:none;">
+      <h2 id="ww-picker-title">یک نفر رو انتخاب کن</h2>
+      <div class="ww-picker-grid" id="ww-picker-grid"></div>
+    </div>
+
+    <div class="ww-witch-choice" id="ww-witch-choice" style="display:none;">
+      <button type="button" class="btn btn-secondary" id="btn-ww-witch-save">💚 نجاتش بده</button>
+      <button type="button" class="btn btn-secondary" id="btn-ww-witch-poison">☠️ یکی رو مسموم کن</button>
+      <button type="button" class="btn btn-ghost" id="btn-ww-witch-skip">⏭️ کاری نکن</button>
+    </div>
+
     <button class="btn btn-primary" id="btn-ww-night-next">بعدی</button>
+    <button class="btn btn-primary" id="btn-ww-confirm-pick" style="display:none;" disabled>تأیید</button>
+
     <div class="ww-night-day-actions" id="ww-night-day-actions" style="display:none;">
       <button class="btn btn-primary" id="btn-ww-next-night">🌙 شب بعد</button>
       <button class="btn btn-secondary" id="btn-ww-night-back">🔙 بازگشت</button>

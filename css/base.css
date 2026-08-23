@@ -1,0 +1,348 @@
+:root{
+  --bg1:#070707;
+  --bg2:#111417;
+  --turquoise:#1fb6a8;
+  --turquoise-dark:#0d5f5a;
+  --gold:#e0b34f;
+  --gold-dim:#b3873a;
+  --card:#121417;
+  --card-light:#1c2024;
+  --text:#f3f7f6;
+  --text-dim:#9fc2c6;
+  --danger:#e1553f;
+  --safe:#2fae82;
+  --radius:22px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;touch-action:manipulation;}
+img{
+  touch-action:manipulation;
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;
+  user-select:none;
+}
+body{
+  margin:0;
+  font-family:'Estedad',sans-serif;
+  background:
+    radial-gradient(circle at 30% 0%, var(--bg2), var(--bg1) 60%),
+    repeating-linear-gradient(45deg, rgba(224,179,79,.045) 0 2px, transparent 2px 42px),
+    repeating-linear-gradient(-45deg, rgba(224,179,79,.045) 0 2px, transparent 2px 42px);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding:24px 16px 48px;
+  user-select:none;
+  overflow-x:hidden;
+}
+.app{
+  width:100%;
+  max-width:460px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+/* ---------- brand / logo ---------- */
+.brand{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:2px;
+}
+.logo-img{
+  width:38px;
+  height:auto;
+  display:block;
+  cursor:pointer;
+  flex:0 0 auto;
+}
+.game-title{
+  flex:1;
+  min-width:0;
+  text-align:center;
+  font-size:15px;
+  font-weight:700;
+  color:var(--text);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.game-title .en-sub{font-size:12px;color:var(--text-dim);font-weight:500;}
+
+.btn-info{
+  flex:0 0 auto;
+  width:34px;height:34px;
+  border-radius:50%;
+  border:1px solid rgba(224,179,79,.35);
+  background:rgba(224,179,79,.1);
+  color:var(--gold);
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* Home splash */
+.home-wrap{
+  min-height:70vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+}
+.home-logo{
+  width:280px;
+  max-width:78%;
+  height:auto;
+}
+.home-enter-btn{
+  width:auto;
+  padding:14px 42px;
+}
+
+/* Back link (setup screen) — big and unmistakable */
+.back-link{
+  align-self:flex-start;
+  background:rgba(224,179,79,.12);
+  border:1px solid rgba(224,179,79,.35);
+  color:var(--gold);
+  font-family:inherit;
+  font-size:14px;
+  font-weight:800;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:10px 18px;
+  border-radius:12px;
+}
+
+/* Games list — Netflix-style horizontal poster row */
+.games-section-title{
+  font-size:18px;
+  font-weight:800;
+  color:var(--text);
+  padding:0 2px;
+}
+.games-row{
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  padding:4px 2px 12px;
+  scroll-snap-type:x proximity;
+}
+.game-poster{
+  position:relative;
+  flex:0 0 auto;
+  width:150px;
+  height:210px;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(224,179,79,.25);
+  box-shadow:0 10px 24px rgba(0,0,0,.4);
+  cursor:pointer;
+  scroll-snap-align:start;
+  transition:transform .15s;
+}
+.game-poster:active{transform:scale(.96);}
+.game-poster-img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+}
+.game-poster-overlay{
+  position:absolute;left:0;right:0;bottom:0;
+  padding:10px 10px 12px;
+  background:linear-gradient(to top, rgba(0,0,0,.9), rgba(0,0,0,.05) 70%);
+}
+.game-poster-title{font-size:15px;font-weight:800;color:#fff;}
+.game-poster-sub{font-size:11px;color:rgba(255,255,255,.7);}
+
+.pattern-divider{
+  height:10px;
+  width:100%;
+  background-image:
+    linear-gradient(45deg, var(--gold) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--gold) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--gold) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--gold) 75%);
+  background-size:14px 14px;
+  background-position:0 0, 0 7px, 7px -7px, -7px 0px;
+  opacity:.3;
+  border-radius:4px;
+}
+
+.screen{display:none;flex-direction:column;gap:18px;animation:fadeIn .25s ease;}
+.screen.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.panel{
+  background:linear-gradient(160deg,var(--card-light),var(--card));
+  border:1px solid rgba(224,179,79,.14);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+.panel h2{
+  margin:0 0 14px;
+  font-size:18px;
+  font-weight:700;
+  color:var(--gold);
+}
+.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+.row:last-child{margin-bottom:0;}
+.row .label{font-size:15px;font-weight:600;color:var(--text);}
+.row .sub{font-size:12px;color:var(--text-dim);margin-top:2px;}
+
+.stepper{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:rgba(0,0,0,.25);
+  border-radius:14px;
+  padding:6px;
+}
+.stepper button{
+  width:34px;height:34px;
+  border-radius:10px;
+  border:none;
+  background:var(--turquoise);
+  color:#fff;
+  font-size:18px;
+  font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+.stepper button:active{transform:scale(.9);}
+.stepper .val{
+  min-width:28px;
+  text-align:center;
+  font-weight:800;
+  font-size:17px;
+}
+
+.chip-group{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{
+  padding:9px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(224,179,79,.18);
+  color:var(--text-dim);
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .15s;
+}
+.chip.active{
+  background:linear-gradient(90deg,var(--turquoise),var(--gold));
+  color:#08202a;
+  border-color:transparent;
+}
+
+.toggle{
+  width:46px;height:26px;
+  border-radius:999px;
+  background:rgba(255,255,255,.15);
+  position:relative;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.toggle.on{background:var(--safe);}
+.toggle .dot{
+  position:absolute;top:3px;right:3px;
+  width:20px;height:20px;border-radius:50%;
+  background:#fff;
+  transition:transform .2s;
+}
+.toggle.on .dot{transform:translateX(-20px);}
+
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:16px;
+  border-radius:16px;
+  border:none;
+  font-family:inherit;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  width:100%;
+}
+.btn-primary{
+  background:linear-gradient(90deg,var(--turquoise),var(--gold));
+  color:#08202a;
+  box-shadow:0 8px 22px rgba(31,182,168,.3);
+}
+.btn-primary:active{transform:scale(.98);}
+.btn-secondary{
+  background:rgba(255,255,255,.08);
+  color:var(--text);
+  border:1px solid rgba(224,179,79,.18);
+}
+.btn-ghost{
+  background:transparent;
+  color:var(--text-dim);
+  font-size:14px;
+  padding:10px;
+}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+
+.footer-note{
+  text-align:center;font-size:11px;color:rgba(255,255,255,.25);margin-top:6px;
+}
+
+/* Modal shell — reused by info modal, names modal, etc. */
+.image-modal{
+  position:fixed;inset:0;
+  background:rgba(4,10,16,.86);
+  display:flex;align-items:center;justify-content:center;
+  z-index:80;
+  opacity:0;pointer-events:none;
+  transition:opacity .2s;
+  padding:20px;
+}
+.image-modal.open{opacity:1;pointer-events:auto;}
+.image-modal-card{
+  background:linear-gradient(160deg,var(--card-light),var(--card));
+  border:1px solid rgba(224,179,79,.3);
+  border-radius:26px;
+  padding:34px 28px;
+  text-align:center;
+  max-width:300px;width:100%;
+}
+.image-modal-close{
+  margin-top:20px;
+  padding:11px 22px;
+  border-radius:14px;
+  border:none;
+  background:rgba(255,255,255,.1);
+  color:var(--text);
+  font-family:inherit;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.info-modal-card{
+  max-width:340px;
+  text-align:right;
+}
+.info-modal-card h2{
+  text-align:center;
+  margin-bottom:16px;
+}
+.info-modal-text{
+  font-size:14px;
+  color:var(--text-dim);
+  line-height:2;
+}
+.info-modal-text b{color:var(--text);}

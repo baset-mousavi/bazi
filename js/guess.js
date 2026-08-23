@@ -154,7 +154,9 @@
   // alternating: tilt down, back to center, tilt down again (or up to skip).
   var TILT_THRESHOLD = 30;
   var TILT_RESET_ZONE = TILT_THRESHOLD * 0.5;
+  var TILT_SETTLE_MS = 400; // grace period so calibration doesn't happen mid-motion
   var orientationBaseline = null;
+  var orientationReadyAt = 0;
   var awaitingNeutral = false;
   var orientationActive = false;
 
@@ -180,6 +182,7 @@
   function handleOrientation(e){
     var value = getTiltReading(e);
     if(value === null || value === undefined) return;
+    if(Date.now() < orientationReadyAt) return; // still settling into position, don't calibrate yet
     if(orientationBaseline === null){ orientationBaseline = value; return; }
     var delta = value - orientationBaseline;
 
@@ -206,6 +209,7 @@
 
   function attachOrientation(){
     orientationBaseline = null;
+    orientationReadyAt = Date.now() + TILT_SETTLE_MS;
     awaitingNeutral = false;
     orientationActive = true;
     window.addEventListener('deviceorientation', handleOrientation);

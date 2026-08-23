@@ -20,11 +20,11 @@
     --text:#f3f7f6;
     --text-dim:#9fc2c6;
     --danger:#e1553f;
-    --safe:#2fae82;
+    --safe:#f2994a;
     --radius:22px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html,body{height:100%;}
+  html,body{height:100%;touch-action:manipulation;}
   img{
     touch-action:manipulation;
     -webkit-touch-callout:none;
@@ -58,33 +58,33 @@
 
   /* ---------- brand / logo ---------- */
   .brand{
-    position:relative;
-    text-align:center;
-    margin-bottom:2px;
     display:flex;
-    flex-direction:column;
+    flex-direction:row;
     align-items:center;
-    gap:6px;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:2px;
   }
   .logo-img{
-    width:190px;
-    max-width:60%;
+    width:38px;
     height:auto;
     display:block;
     cursor:pointer;
+    flex:0 0 auto;
   }
   .game-title{
-    margin-top:2px;
+    flex:1;
+    min-width:0;
+    text-align:center;
     font-size:15px;
     font-weight:700;
     color:var(--text);
-    display:flex;align-items:center;gap:6px;
+    display:flex;align-items:center;justify-content:center;gap:6px;
   }
   .game-title .en-sub{font-size:12px;color:var(--text-dim);font-weight:500;}
 
   .btn-info{
-    position:absolute;
-    top:0;left:0;
+    flex:0 0 auto;
     width:34px;height:34px;
     border-radius:50%;
     border:1px solid rgba(224,179,79,.35);
@@ -172,6 +172,42 @@
   }
   .game-poster-title{font-size:15px;font-weight:800;color:#fff;}
   .game-poster-sub{font-size:11px;color:rgba(255,255,255,.7);}
+
+  /* Bomb game */
+  .bomb-card{
+    position:relative;
+    min-height:400px;
+    border-radius:26px;
+    border:1px solid rgba(224,179,79,.2);
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(160deg,#1c1418,#0d0808);
+    padding:24px;
+    text-align:center;
+    transition:background .3s;
+  }
+  .bomb-card.boom{
+    background:linear-gradient(160deg,#4a1522,#250a12);
+    animation:bombShake .4s;
+  }
+  @keyframes bombShake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-10px);}
+    40%{transform:translateX(10px);}
+    60%{transform:translateX(-6px);}
+    80%{transform:translateX(6px);}
+  }
+  .bomb-category-label{font-size:13px;color:var(--text-dim);}
+  .bomb-category-value{font-size:26px;font-weight:800;color:var(--gold);margin:6px 0 18px;}
+  .bomb-icon{font-size:90px;animation:bombPulse 1s ease-in-out infinite;}
+  @keyframes bombPulse{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.08);}
+  }
+  .bomb-instructions{font-size:14px;color:var(--text-dim);margin-top:18px;line-height:1.8;}
+  .bomb-boom-icon{font-size:110px;}
+  .bomb-boom-text{font-size:34px;font-weight:800;color:var(--danger);margin-top:8px;}
+  .bomb-boom-sub{font-size:14px;color:var(--text-dim);margin-top:10px;}
 
   .pattern-divider{
     height:10px;
@@ -277,7 +313,8 @@
   }
   .toggle.on .dot{transform:translateX(-20px);}
 
-  .names-list{display:flex;flex-direction:column;gap:8px;}
+  .names-open-arrow{font-size:20px;color:var(--gold);}
+  .names-list{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
   .names-list input{
     width:100%;
     padding:11px 14px;
@@ -368,7 +405,7 @@
     padding:24px;
     background:linear-gradient(160deg,#123244,#081726);
   }
-  .card-back.is-citizen{background:linear-gradient(160deg,#123d33,#07211a);}
+  .card-back.is-citizen{background:linear-gradient(160deg,#4a2f0f,#2a1704);}
   .card-back.is-citizen .role-word{color:var(--safe);}
   .card-back.is-imposter{background:linear-gradient(160deg,#4a1522,#250a12);}
   .card-back.is-imposter .role-word{color:var(--danger);}
@@ -377,26 +414,6 @@
   .role-pron{font-size:14px;color:var(--text-dim);font-weight:600;direction:ltr;}
   .role-hint{font-size:15px;color:var(--text);font-weight:700;margin-top:6px;}
   .role-hint .role-hint-pron{display:block;font-size:12px;color:var(--text-dim);font-weight:500;direction:ltr;margin-top:2px;}
-
-  /* image-check button: sits OUTSIDE the swipeable rectangle */
-  .check-img-btn{
-    width:100%;
-    display:flex;
-    margin-top:2px;
-    padding:12px 16px;
-    border-radius:14px;
-    border:1px solid rgba(224,179,79,.4);
-    background:rgba(224,179,79,.12);
-    color:var(--gold);
-    font-family:inherit;
-    font-size:14px;
-    font-weight:700;
-    cursor:pointer;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-  }
-  .check-img-btn:disabled{opacity:.35;cursor:not-allowed;}
 
   /* front layer: draggable cover image */
   .card-front{
@@ -535,9 +552,6 @@
     text-align:center;
     max-width:300px;width:100%;
   }
-  .image-modal-emoji{font-size:96px;line-height:1;margin-bottom:12px;}
-  .image-modal-word{font-size:24px;font-weight:800;color:var(--gold);}
-  .image-modal-pron{font-size:13px;color:var(--text-dim);margin-top:4px;direction:ltr;}
   .image-modal-close{
     margin-top:20px;
     padding:11px 22px;
@@ -579,9 +593,9 @@
 
   <div id="app-chrome" style="display:none;">
     <div class="brand">
-      <button type="button" class="btn-info" id="btn-info" aria-label="راهنمای بازی">ℹ️</button>
       <img class="logo-img" id="header-logo" src="Logo.png" alt="Juju Games">
-      <div class="game-title">🎭 جاسوس <span class="en-sub">(Imposter)</span></div>
+      <div class="game-title" id="game-title-text">🎭 جاسوس <span class="en-sub">(Imposter)</span></div>
+      <button type="button" class="btn-info" id="btn-info" aria-label="راهنمای بازی">ℹ️</button>
     </div>
     <div class="pattern-divider"></div>
   </div>
@@ -591,10 +605,17 @@
     <div class="games-section-title">بازی‌ها</div>
     <div class="games-row">
       <div class="game-poster" id="tile-imposter">
-        <img class="game-poster-img" src="heuschrecke.jpg" alt="">
+        <img class="game-poster-img" src="jasus_cover.jpg" alt="">
         <div class="game-poster-overlay">
           <div class="game-poster-title">جاسوس</div>
           <div class="game-poster-sub">Imposter</div>
+        </div>
+      </div>
+      <div class="game-poster" id="tile-bomb">
+        <img class="game-poster-img" src="bomb_cover.jpg" alt="">
+        <div class="game-poster-overlay">
+          <div class="game-poster-title">بمب</div>
+          <div class="game-poster-sub">Bomb</div>
         </div>
       </div>
     </div>
@@ -630,9 +651,14 @@
       </div>
     </div>
 
-    <div class="panel">
-      <h2>اسم بازیکن‌ها (اختیاری)</h2>
-      <div class="names-list" id="names-list"></div>
+    <div class="panel" id="btn-open-names" role="button" style="cursor:pointer;">
+      <div class="row" style="margin-bottom:0;">
+        <div>
+          <div class="label">👥 بازیکن‌ها</div>
+          <div class="sub">اسم‌ها را وارد کن (اختیاری)</div>
+        </div>
+        <span class="names-open-arrow">‹</span>
+      </div>
     </div>
 
     <div class="panel">
@@ -678,8 +704,6 @@
       </div>
     </div>
 
-    <button type="button" class="check-img-btn" id="check-img-btn" disabled>🖼️ تصویر کلمه</button>
-
     <div class="hint-note">فقط همین بازیکن به صفحه نگاه کند 👀</div>
 
     <button class="btn btn-primary" id="btn-next-player" disabled>بازیکن بعدی</button>
@@ -710,30 +734,63 @@
     <button class="btn btn-secondary" id="btn-back-setup-2">🔙 بازگشت</button>
   </div>
 
-  <div class="footer-note">نسخه‌ی آزمایشی — Juju Games</div>
-</div>
+  <!-- BOMB SETUP -->
+  <div class="screen" id="screen-bomb-setup">
+    <button type="button" class="back-link" id="btn-bomb-back-games">‹ بازگشت</button>
 
-<!-- image check modal -->
-<div class="image-modal" id="image-modal">
-  <div class="image-modal-card">
-    <div class="image-modal-emoji" id="image-modal-emoji">🍕</div>
-    <div class="image-modal-word" id="image-modal-word">—</div>
-    <div class="image-modal-pron" id="image-modal-pron"></div>
-    <button type="button" class="image-modal-close" id="image-modal-close">بستن</button>
+    <div class="panel">
+      <h2>دسته‌بندی</h2>
+      <div class="chip-group" id="bomb-category-chips"></div>
+    </div>
+
+    <div class="panel">
+      <h2>طول فیوز</h2>
+      <div class="chip-group" id="bomb-fuse-chips"></div>
+    </div>
+
+    <button class="btn btn-primary" id="btn-bomb-start">💣 شروع بازی</button>
   </div>
+
+  <!-- BOMB PLAY -->
+  <div class="screen" id="screen-bomb-play">
+    <div class="bomb-card" id="bomb-card">
+      <div class="bomb-armed" id="bomb-armed">
+        <div>
+          <div class="bomb-category-label">دسته:</div>
+          <div class="bomb-category-value" id="bomb-category-value">—</div>
+          <div class="bomb-icon">💣</div>
+          <div class="bomb-instructions">یک کلمه در این دسته بگو و<br>سریع گوشی را به نفر بعدی بده!</div>
+        </div>
+      </div>
+      <div class="bomb-exploded" id="bomb-exploded" style="display:none;">
+        <div class="bomb-boom-icon">💥</div>
+        <div class="bomb-boom-text">ترکید!</div>
+        <div class="bomb-boom-sub">هر کی گوشی دستشه بازنده‌ی این دوره‌ست 😅</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="btn-bomb-again">🔁 دور جدید</button>
+    <button class="btn btn-ghost" id="btn-bomb-back-setup">🔙 بازگشت</button>
+  </div>
+
+  <div class="footer-note">نسخه‌ی آزمایشی — Juju Games</div>
 </div>
 
 <!-- info / how-to-play modal -->
 <div class="image-modal" id="info-modal">
   <div class="image-modal-card info-modal-card">
-    <h2>🎭 راهنمای بازی</h2>
-    <div class="info-modal-text">
-      هر بازیکن به نوبت یک <b>کلمه یا جمله کوتاه</b> درباره‌ی کلمه‌ی مخفی می‌گوید،
-      بدون اینکه مستقیم آن را لو بدهد.<br><br>
-      جاسوس‌ها باید خودشان را جا بزنند و کلمه را حدس بزنند.<br><br>
-      بقیه باید با رأی‌گیری، جاسوس را پیدا کنند.
-    </div>
+    <h2 id="info-modal-heading">ℹ️ راهنمای بازی</h2>
+    <div class="info-modal-text" id="info-modal-text"></div>
     <button type="button" class="image-modal-close" id="info-modal-close">متوجه شدم</button>
+  </div>
+</div>
+
+<!-- player names modal -->
+<div class="image-modal" id="names-modal">
+  <div class="image-modal-card info-modal-card">
+    <h2>👥 اسم بازیکن‌ها</h2>
+    <div class="names-list" id="names-list"></div>
+    <button type="button" class="image-modal-close" id="names-modal-close">تمام</button>
   </div>
 </div>
 
@@ -815,9 +872,12 @@
       setup: document.getElementById('screen-setup'),
       reveal: document.getElementById('screen-reveal'),
       play: document.getElementById('screen-play'),
-      results: document.getElementById('screen-results')
+      results: document.getElementById('screen-results'),
+      bombSetup: document.getElementById('screen-bomb-setup'),
+      bombPlay: document.getElementById('screen-bomb-play')
     },
     appChrome: document.getElementById('app-chrome'),
+    gameTitleText: document.getElementById('game-title-text'),
 
     revealPlayerName: document.getElementById('reveal-player-name'),
     progressDots: document.getElementById('progress-dots'),
@@ -829,7 +889,6 @@
     roleWord: document.getElementById('role-word'),
     rolePron: document.getElementById('role-pron'),
     roleHint: document.getElementById('role-hint'),
-    checkImgBtn: document.getElementById('check-img-btn'),
     btnNextPlayer: document.getElementById('btn-next-player'),
 
     starterName: document.getElementById('starter-name'),
@@ -841,12 +900,6 @@
 
     imposterHeading: document.getElementById('imposter-heading'),
     imposterList: document.getElementById('imposter-list'),
-
-    imageModal: document.getElementById('image-modal'),
-    imageModalEmoji: document.getElementById('image-modal-emoji'),
-    imageModalWord: document.getElementById('image-modal-word'),
-    imageModalPron: document.getElementById('image-modal-pron'),
-    imageModalClose: document.getElementById('image-modal-close'),
   };
 
   function showScreen(name){
@@ -854,21 +907,40 @@
       el.screens[k].classList.toggle('active', k === name);
     });
     el.appChrome.style.display = (name === 'home') ? 'none' : 'block';
+    if(name !== 'bombPlay' && typeof bombState !== 'undefined'){
+      clearTimeout(bombState.timeoutHandle);
+    }
     window.scrollTo(0,0);
   }
 
-  document.getElementById('btn-enter-games').addEventListener('click', function(){
+  var activeGame = null;
+  var btnInfo = document.getElementById('btn-info');
+  btnInfo.style.display = 'none';
+
+  function setActiveGame(name, titleHtml){
+    activeGame = name;
+    el.gameTitleText.innerHTML = titleHtml;
+    // the ℹ️ how-to-play button only makes sense for Imposter right now
+    btnInfo.style.display = (name === 'imposter') ? '' : 'none';
+  }
+
+  function goToGames(){
+    setActiveGame(null, '🎮 بازی‌ها');
     showScreen('games');
-  });
+  }
+
+  document.getElementById('btn-enter-games').addEventListener('click', goToGames);
   document.getElementById('tile-imposter').addEventListener('click', function(){
+    setActiveGame('imposter', '🎭 جاسوس <span class="en-sub">(Imposter)</span>');
     showScreen('setup');
   });
-  document.getElementById('header-logo').addEventListener('click', function(){
-    showScreen('games');
+  document.getElementById('tile-bomb').addEventListener('click', function(){
+    setActiveGame('bomb', '💣 بمب <span class="en-sub">(Bomb)</span>');
+    showScreen('bombSetup');
   });
-  document.getElementById('btn-back-games').addEventListener('click', function(){
-    showScreen('games');
-  });
+  document.getElementById('header-logo').addEventListener('click', goToGames);
+  document.getElementById('btn-back-games').addEventListener('click', goToGames);
+  document.getElementById('btn-bomb-back-games').addEventListener('click', goToGames);
 
   // ---------- SETUP: players/imposters steppers ----------
   function renderPlayersVal(){
@@ -1028,7 +1100,6 @@
     el.revealPlayerName.textContent = role.name;
     el.btnNextPlayer.disabled = true;
     el.btnNextPlayer.textContent = (state.currentReveal === state.roles.length-1) ? 'شروع بازی' : 'بازیکن بعدی';
-    el.checkImgBtn.disabled = true;
 
     revealedThisTurn = false;
     resetCardPosition();
@@ -1059,14 +1130,6 @@
     }
   }
 
-  function imageForCurrentRole(){
-    var role = currentRole();
-    if(role.isImposter){
-      return currentHintKey ? HINTS[currentHintKey] : null;
-    }
-    return state.secretWord;
-  }
-
   // ---------- swipe-to-reveal (Tinder-style) ----------
   var drag = { active:false, startX:0, pointerId:null };
   var CARD_REVEAL_THRESHOLD = 90; // px dragged right before "next" unlocks
@@ -1090,7 +1153,6 @@
     if(!revealedThisTurn && dx > CARD_REVEAL_THRESHOLD){
       revealedThisTurn = true;
       el.btnNextPlayer.disabled = false;
-      el.checkImgBtn.disabled = false;
     }
   });
 
@@ -1107,11 +1169,6 @@
   el.cardFront.addEventListener('pointerup', endDrag);
   el.cardFront.addEventListener('pointercancel', endDrag);
 
-  el.checkImgBtn.addEventListener('click', function(){
-    if(el.checkImgBtn.disabled) return;
-    openImageModal(imageForCurrentRole());
-  });
-
   el.btnNextPlayer.addEventListener('click', function(){
     if(el.btnNextPlayer.disabled) return;
     state.currentReveal++;
@@ -1123,31 +1180,21 @@
     }
   });
 
-  // ---------- image check modal ----------
-  function openImageModal(wordObj){
-    if(!wordObj){
-      el.imageModalEmoji.textContent = '🚫';
-      el.imageModalWord.textContent = 'راهنمایی در کار نیست';
-      el.imageModalPron.textContent = '';
-    } else {
-      el.imageModalEmoji.textContent = wordObj.e;
-      el.imageModalWord.textContent = wordObj.w;
-      el.imageModalPron.textContent = '(' + wordObj.p + ')';
-    }
-    el.imageModal.classList.add('open');
-  }
-  function closeImageModal(){
-    el.imageModal.classList.remove('open');
-  }
-  el.imageModalClose.addEventListener('click', closeImageModal);
-  el.imageModal.addEventListener('click', function(e){
-    if(e.target === el.imageModal) closeImageModal();
-  });
-
   // ---------- info / how-to-play modal ----------
+  var INFO_TEXTS = {
+    imposter: 'هر بازیکن به نوبت یک <b>کلمه یا جمله کوتاه</b> درباره‌ی کلمه‌ی مخفی می‌گوید، ' +
+      'بدون اینکه مستقیم آن را لو بدهد.<br><br>' +
+      'جاسوس‌ها باید خودشان را جا بزنند و کلمه را حدس بزنند.<br><br>' +
+      'بقیه باید با رأی‌گیری، جاسوس را پیدا کنند.',
+    bomb: 'یک دسته‌بندی و طول فیوز انتخاب کن و بازی را شروع کن.<br><br>' +
+      'گوشی دست به دست می‌چرخد؛ هر نفر باید سریع یک <b>کلمه‌ی مرتبط با دسته</b> بگوید و گوشی را به نفر بعدی بدهد.<br><br>' +
+      'هیچ‌کس نمی‌داند بمب کِی می‌ترکد! هر کس موقع ترکیدن گوشی دستش باشد، بازنده‌ی آن دور است.'
+  };
   var infoModal = document.getElementById('info-modal');
   var infoModalClose = document.getElementById('info-modal-close');
+  var infoModalText = document.getElementById('info-modal-text');
   document.getElementById('btn-info').addEventListener('click', function(){
+    infoModalText.innerHTML = INFO_TEXTS[activeGame] || INFO_TEXTS.imposter;
     infoModal.classList.add('open');
   });
   infoModalClose.addEventListener('click', function(){
@@ -1155,6 +1202,18 @@
   });
   infoModal.addEventListener('click', function(e){
     if(e.target === infoModal) infoModal.classList.remove('open');
+  });
+
+  // ---------- player names modal ----------
+  var namesModal = document.getElementById('names-modal');
+  document.getElementById('btn-open-names').addEventListener('click', function(){
+    namesModal.classList.add('open');
+  });
+  document.getElementById('names-modal-close').addEventListener('click', function(){
+    namesModal.classList.remove('open');
+  });
+  namesModal.addEventListener('click', function(e){
+    if(e.target === namesModal) namesModal.classList.remove('open');
   });
 
   // ---------- PLAY / TIMER SCREEN ----------
@@ -1267,10 +1326,94 @@
     showScreen('setup');
   });
 
+  // ---------- BOMB GAME ----------
+  var BOMB_CATEGORIES = ['حیوانات','میوه‌ها','رنگ‌ها','کشورها','شهرهای ایران','ورزش‌ها','غذاها','خواننده‌ها','فیلم‌ها','مشاغل','اسم پسر','اسم دختر','لوازم خانه','فوتبالیست‌ها'];
+  var BOMB_FUSES = [
+    { key:'short',  label:'کوتاه',    min:12, max:22 },
+    { key:'medium', label:'متوسط',    min:25, max:45 },
+    { key:'long',   label:'طولانی',   min:40, max:70 }
+  ];
+  var bombState = {
+    category: BOMB_CATEGORIES[0],
+    fuseKey: 'medium',
+    timeoutHandle: null
+  };
+
+  var bombEls = {
+    categoryChips: document.getElementById('bomb-category-chips'),
+    fuseChips: document.getElementById('bomb-fuse-chips'),
+    card: document.getElementById('bomb-card'),
+    armed: document.getElementById('bomb-armed'),
+    exploded: document.getElementById('bomb-exploded'),
+    categoryValue: document.getElementById('bomb-category-value')
+  };
+
+  function renderBombCategoryChips(){
+    bombEls.categoryChips.innerHTML = '';
+    BOMB_CATEGORIES.forEach(function(cat){
+      var chip = document.createElement('div');
+      chip.className = 'chip' + (cat === bombState.category ? ' active' : '');
+      chip.textContent = cat;
+      chip.addEventListener('click', function(){
+        bombState.category = cat;
+        renderBombCategoryChips();
+      });
+      bombEls.categoryChips.appendChild(chip);
+    });
+  }
+
+  function renderBombFuseChips(){
+    bombEls.fuseChips.innerHTML = '';
+    BOMB_FUSES.forEach(function(fuse){
+      var chip = document.createElement('div');
+      chip.className = 'chip' + (fuse.key === bombState.fuseKey ? ' active' : '');
+      chip.textContent = fuse.label;
+      chip.addEventListener('click', function(){
+        bombState.fuseKey = fuse.key;
+        renderBombFuseChips();
+      });
+      bombEls.fuseChips.appendChild(chip);
+    });
+  }
+
+  function currentBombFuse(){
+    var found = BOMB_FUSES.filter(function(f){ return f.key === bombState.fuseKey; })[0];
+    return found || BOMB_FUSES[1];
+  }
+
+  function startBombRound(){
+    bombEls.categoryValue.textContent = bombState.category;
+    bombEls.armed.style.display = '';
+    bombEls.exploded.style.display = 'none';
+    bombEls.card.classList.remove('boom');
+    showScreen('bombPlay');
+
+    var fuse = currentBombFuse();
+    var duration = (Math.random() * (fuse.max - fuse.min) + fuse.min) * 1000;
+    clearTimeout(bombState.timeoutHandle);
+    bombState.timeoutHandle = setTimeout(explodeBomb, duration);
+  }
+
+  function explodeBomb(){
+    bombEls.armed.style.display = 'none';
+    bombEls.exploded.style.display = '';
+    bombEls.card.classList.add('boom');
+    if(navigator.vibrate){ navigator.vibrate([200,80,200,80,400]); }
+  }
+
+  document.getElementById('btn-bomb-start').addEventListener('click', startBombRound);
+  document.getElementById('btn-bomb-again').addEventListener('click', startBombRound);
+  document.getElementById('btn-bomb-back-setup').addEventListener('click', function(){
+    clearTimeout(bombState.timeoutHandle);
+    showScreen('bombSetup');
+  });
+
   // ---------- INIT ----------
   renderPlayersVal();
   renderTimerChips();
   el.toggleHint.classList.toggle('on', state.showHintToImposter);
+  renderBombCategoryChips();
+  renderBombFuseChips();
 })();
 </script>
 </body>

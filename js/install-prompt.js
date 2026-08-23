@@ -18,6 +18,26 @@
     return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   }
 
+  // GoatCounter's count.js loads async, so window.goatcounter may not exist
+  // yet — retry briefly instead of dropping the event.
+  function gcEvent(path, title){
+    var tries = 0;
+    (function attempt(){
+      if(window.goatcounter && window.goatcounter.count){
+        window.goatcounter.count({ path: path, title: title || path, event: true });
+      } else if(tries < 20){
+        tries++;
+        setTimeout(attempt, 150);
+      }
+    })();
+  }
+
+  // proxy signal for "this is an install being used", since iOS never tells
+  // us about the Add to Home Screen step itself
+  if(isStandalone()){
+    gcEvent('standalone-open', 'App im installierten Modus geöffnet');
+  }
+
   if(isStandalone() || localStorage.getItem(STORAGE_KEY) === '1'){
     return;
   }
@@ -56,6 +76,7 @@
   });
 
   window.addEventListener('appinstalled', function(){
+    gcEvent('pwa-installed', 'Über Chrome-Dialog installiert');
     localStorage.setItem(STORAGE_KEY, '1');
     hideBanner();
   });

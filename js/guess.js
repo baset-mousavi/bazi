@@ -94,8 +94,6 @@
     clock: document.getElementById('guess-clock'),
     cardCategory: document.getElementById('guess-card-category'),
     cardWord: document.getElementById('guess-card-word'),
-    btnCorrect: document.getElementById('btn-guess-correct'),
-    btnSkip: document.getElementById('btn-guess-skip'),
     btnMute: document.getElementById('btn-guess-mute'),
 
     resultsHeading: document.getElementById('guess-results-heading'),
@@ -154,16 +152,36 @@
   // gesture stops registering. A tilt only counts once the phone has swung
   // back through the neutral zone since the last one, so play is naturally
   // alternating: tilt down, back to center, tilt down again (or up to skip).
-  var TILT_THRESHOLD = 35;
+  var TILT_THRESHOLD = 30;
   var TILT_RESET_ZONE = TILT_THRESHOLD * 0.5;
   var orientationBaseline = null;
   var awaitingNeutral = false;
   var orientationActive = false;
 
+  // beta/gamma are always relative to the DEVICE, not the screen. In
+  // portrait, "tilt forward/back" is beta. Once the screen is rotated to
+  // landscape (which is exactly what this game forces), that same physical
+  // motion shows up on gamma instead, with a sign that depends on which way
+  // the rotation went — this is the standard remap for that.
+  function getScreenAngle(){
+    if(screen.orientation && typeof screen.orientation.angle === 'number') return screen.orientation.angle;
+    if(typeof window.orientation === 'number') return window.orientation;
+    return 0;
+  }
+
+  function getTiltReading(e){
+    var angle = getScreenAngle();
+    if(angle === 90) return -e.gamma;
+    if(angle === -90 || angle === 270) return e.gamma;
+    if(angle === 180) return -e.beta;
+    return e.beta;
+  }
+
   function handleOrientation(e){
-    if(e.beta === null || e.beta === undefined) return;
-    if(orientationBaseline === null){ orientationBaseline = e.beta; return; }
-    var delta = e.beta - orientationBaseline;
+    var value = getTiltReading(e);
+    if(value === null || value === undefined) return;
+    if(orientationBaseline === null){ orientationBaseline = value; return; }
+    var delta = value - orientationBaseline;
 
     if(awaitingNeutral){
       if(Math.abs(delta) < TILT_RESET_ZONE) awaitingNeutral = false;
@@ -198,6 +216,33 @@
     window.removeEventListener('deviceorientation', handleOrientation);
   }
 
+  // ---------- force landscape ----------
+  // screen.orientation.lock() only works while the page is fullscreen, and
+  // only on browsers that support it at all (no iOS Safari) — so this is
+  // best-effort. The CSS orientation:portrait fallback (rotate-hint) still
+  // covers everyone this doesn't work for.
+  function requestLandscape(){
+    var docEl = document.documentElement;
+    var requestFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+    var fsPromise = Promise.resolve();
+    if(requestFs && !document.fullscreenElement){
+      try{ fsPromise = requestFs.call(docEl).catch(function(){}); }catch(e){}
+    }
+    return fsPromise.then(function(){
+      if(screen.orientation && screen.orientation.lock){
+        return screen.orientation.lock('landscape').catch(function(){});
+      }
+    }).catch(function(){});
+  }
+
+  function releaseLandscape(){
+    try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
+    if(document.fullscreenElement){
+      var exitFs = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+      if(exitFs){ try{ exitFs.call(document).catch(function(){}); }catch(e){} }
+    }
+  }
+
   document.addEventListener('juju:screenchange', function(e){
     if(e.detail.screen !== 'guessPlay' && orientationActive){
       detachOrientation();
@@ -205,6 +250,9 @@
     if(e.detail.screen !== 'guessPlay'){
       clearInterval(state.timerHandle);
       stopBackgroundMusic();
+    }
+    if(e.detail.screen !== 'guessPlay' && e.detail.screen !== 'guessCountdown'){
+      releaseLandscape();
     }
   });
 
@@ -298,6 +346,7 @@
   // ---------- play flow ----------
   el.btnStart.addEventListener('click', function(){
     getAudioCtx(); // unlock audio now, while we still have a user gesture (Safari requirement)
+    requestLandscape();
     requestMotionPermission().then(function(){
       state.results = [];
       buildDeck();
@@ -364,9 +413,6 @@
     }, 320);
   }
 
-  el.btnCorrect.addEventListener('click', function(){ resolveWord(true); });
-  el.btnSkip.addEventListener('click', function(){ resolveWord(false); });
-
   document.getElementById('btn-guess-end-early').addEventListener('click', function(){
     endRound();
   });
@@ -393,6 +439,8 @@
   }
 
   document.getElementById('btn-guess-play-again').addEventListener('click', function(){
+    getAudioCtx();
+    requestLandscape();
     state.results = [];
     buildDeck();
     Juju.showScreen('guessCountdown');

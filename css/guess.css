@@ -13,8 +13,11 @@
   gap:0;
   transition:background .25s;
 }
-.guess-fullscreen-screen.active.flash-correct{background:linear-gradient(160deg,#123d33,#07211a);}
-.guess-fullscreen-screen.active.flash-skip{background:linear-gradient(160deg,#4a1522,#250a12);}
+/* Play screen: white by default, bold green/red on tilt so the result
+   reads instantly from across a room — not the dark app theme. */
+#screen-guess-play.active{background:#fff;transition:background .12s;}
+#screen-guess-play.active.flash-correct{background:#22c55e;}
+#screen-guess-play.active.flash-skip{background:#ef4444;}
 
 .guess-fullscreen-inner{
   display:flex;
@@ -51,6 +54,8 @@
   .guess-rotate-hint{display:flex;}
   .guess-fullscreen-inner{display:none;}
 }
+/* play screen's rotate-hint sits on white, not the dark app background */
+#screen-guess-play .guess-rotate-hint{color:#555;}
 
 /* Countdown content */
 .guess-countdown-inner{
@@ -123,9 +128,9 @@
 .guess-icon-btn{
   width:38px;height:38px;
   border-radius:50%;
-  border:1px solid rgba(224,179,79,.3);
-  background:rgba(255,255,255,.06);
-  color:var(--text);
+  border:1px solid rgba(0,0,0,.15);
+  background:rgba(0,0,0,.05);
+  color:#333;
   font-size:16px;
   cursor:pointer;
   display:flex;align-items:center;justify-content:center;
@@ -134,14 +139,14 @@
 .guess-score{
   font-size:16px;
   font-weight:800;
-  color:var(--safe);
+  color:#16a34a;
 }
 .guess-clock{
   font-size:20px;
   font-weight:800;
   font-variant-numeric:tabular-nums;
   direction:ltr;
-  color:var(--gold);
+  color:#333;
 }
 
 .guess-card{
@@ -158,53 +163,38 @@
   font-size:13px;
   font-weight:700;
   letter-spacing:.5px;
-  color:var(--text-dim);
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(224,179,79,.18);
+  color:#666;
+  background:rgba(0,0,0,.05);
+  border:1px solid rgba(0,0,0,.1);
   padding:6px 14px;
   border-radius:999px;
 }
 .guess-card-word{
-  font-size:clamp(34px, 8vw, 64px);
+  font-size:clamp(34px, 8vw, 72px);
   font-weight:800;
-  color:var(--text);
+  color:#111;
   line-height:1.25;
   max-width:90%;
 }
 
-.guess-actions{
-  display:flex;
-  gap:14px;
-  flex:0 0 auto;
+#screen-guess-play.flash-correct .guess-icon-btn,
+#screen-guess-play.flash-skip .guess-icon-btn{
+  border-color:rgba(255,255,255,.4);
+  background:rgba(255,255,255,.18);
+  color:#fff;
 }
-.guess-action-btn{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:4px;
-  padding:16px 10px;
-  border-radius:18px;
-  border:none;
-  font-family:inherit;
-  font-size:22px;
-  cursor:pointer;
+#screen-guess-play.flash-correct .guess-clock,
+#screen-guess-play.flash-skip .guess-clock,
+#screen-guess-play.flash-correct .guess-score,
+#screen-guess-play.flash-skip .guess-score{color:#fff;}
+#screen-guess-play.flash-correct .guess-card-category,
+#screen-guess-play.flash-skip .guess-card-category{
+  color:#fff;
+  background:rgba(255,255,255,.2);
+  border-color:rgba(255,255,255,.4);
 }
-.guess-action-btn span{
-  font-size:13px;
-  font-weight:700;
-}
-.guess-skip{
-  background:rgba(225,85,63,.14);
-  border:1px solid rgba(225,85,63,.35);
-  color:var(--danger);
-}
-.guess-correct{
-  background:rgba(47,174,130,.14);
-  border:1px solid rgba(47,174,130,.4);
-  color:var(--safe);
-}
-.guess-action-btn:active{transform:scale(.96);}
+#screen-guess-play.flash-correct .guess-card-word,
+#screen-guess-play.flash-skip .guess-card-word{color:#fff;}
 
 /* Results (stays in the normal portrait app layout) */
 .guess-result-list{display:flex;flex-direction:column;gap:8px;}

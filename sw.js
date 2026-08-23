@@ -1,5 +1,5 @@
 // Bumping CACHE_NAME invalidates all previously cached files on next visit.
-var CACHE_NAME = 'juju-games-v4';
+var CACHE_NAME = 'juju-games-v5';
 
 var IMAGE_EXT = /\.(png|jpg|jpeg|gif|webp)$/i;
 

@@ -148,18 +148,32 @@
   }
 
   // ---------- motion (tilt to answer) ----------
+  // Calibrated once per round, not per word — otherwise the neutral point
+  // drifts to wherever the phone happens to be right after a tilt, and the
+  // gesture stops registering. A tilt only counts once the phone has swung
+  // back through the neutral zone since the last one, so play is naturally
+  // alternating: tilt down, back to center, tilt down again (or up to skip).
   var TILT_THRESHOLD = 35;
+  var TILT_RESET_ZONE = TILT_THRESHOLD * 0.5;
   var orientationBaseline = null;
-  var orientationCooldown = false;
+  var awaitingNeutral = false;
   var orientationActive = false;
 
   function handleOrientation(e){
-    if(e.beta === null || e.beta === undefined || orientationCooldown) return;
+    if(e.beta === null || e.beta === undefined) return;
     if(orientationBaseline === null){ orientationBaseline = e.beta; return; }
     var delta = e.beta - orientationBaseline;
+
+    if(awaitingNeutral){
+      if(Math.abs(delta) < TILT_RESET_ZONE) awaitingNeutral = false;
+      return;
+    }
+
     if(delta > TILT_THRESHOLD){
+      awaitingNeutral = true;
       resolveWord(true);
     } else if(delta < -TILT_THRESHOLD){
+      awaitingNeutral = true;
       resolveWord(false);
     }
   }
@@ -173,7 +187,7 @@
 
   function attachOrientation(){
     orientationBaseline = null;
-    orientationCooldown = false;
+    awaitingNeutral = false;
     orientationActive = true;
     window.addEventListener('deviceorientation', handleOrientation);
   }
@@ -240,7 +254,6 @@
   }
 
   function resolveWord(correct){
-    orientationCooldown = true;
     state.results.push({ word: state.currentWord, correct: correct });
 
     el.card.classList.remove('flash-correct','flash-skip');
@@ -257,8 +270,6 @@
     state.flashTimeout = setTimeout(function(){
       el.card.classList.remove('flash-correct','flash-skip');
       nextWord();
-      orientationBaseline = null;
-      orientationCooldown = false;
     }, 320);
   }
 

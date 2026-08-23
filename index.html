@@ -779,7 +779,7 @@
       </div>
     </div>
 
-    <button class="btn btn-primary" id="btn-bomb-again">🔁 دور جدید</button>
+    <button class="btn btn-primary" id="btn-bomb-again" style="display:none;">🔁 دور جدید</button>
     <button class="btn btn-ghost" id="btn-bomb-back-setup">🔙 بازگشت</button>
   </div>
 
@@ -1473,6 +1473,7 @@
     bombEls.armed.style.display = '';
     bombEls.exploded.style.display = 'none';
     bombEls.card.classList.remove('boom');
+    document.getElementById('btn-bomb-again').style.display = 'none';
     showScreen('bombPlay');
 
     var fuse = currentBombFuse();
@@ -1485,6 +1486,7 @@
     bombEls.armed.style.display = 'none';
     bombEls.exploded.style.display = '';
     bombEls.card.classList.add('boom');
+    document.getElementById('btn-bomb-again').style.display = 'flex';
     playExplosionSound();
     if(navigator.vibrate){ navigator.vibrate([200,80,200,80,400]); }
   }

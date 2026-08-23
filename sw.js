@@ -1,5 +1,5 @@
 // Bumping CACHE_NAME invalidates all previously cached files on next visit.
-var CACHE_NAME = 'juju-games-v5';
+var CACHE_NAME = 'juju-games-v6';
 
 var IMAGE_EXT = /\.(png|jpg|jpeg|gif|webp)$/i;
 
@@ -11,15 +11,18 @@ var PRECACHE_URLS = [
   'css/imposter.css',
   'css/bomb.css',
   'css/guess.css',
+  'css/werewolf.css',
   'js/install-prompt.js',
   'js/core.js',
   'js/imposter.js',
   'js/bomb.js',
   'js/guess.js',
+  'js/werewolf.js',
   'Logo.png',
   'jasus_cover.jpg',
   'bomb_cover.jpg',
   'guess_cover.jpg',
+  'werwolf_cover.png',
   'bomb.jpg',
   'heuschrecke.jpg',
   'Spieler1.png',

@@ -1,0 +1,26 @@
+.ww-role-row .sub{margin-top:3px;}
+.ww-role-row.is-disabled{opacity:.45;}
+
+/* reveal-card team colors (village/wolf/special) */
+.card-back.is-village{background:linear-gradient(160deg,#123d33,#07211a);}
+.card-back.is-village .role-word{color:var(--safe);}
+.card-back.is-wolf{background:linear-gradient(160deg,#4a1522,#250a12);}
+.card-back.is-wolf .role-word{color:var(--danger);}
+.card-back.is-special{background:linear-gradient(160deg,#2a1f47,#150f28);}
+.card-back.is-special .role-word{color:#c9a6ff;}
+
+/* night guide */
+.ww-night-panel{
+  min-height:320px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  gap:14px;
+}
+.ww-night-icon{font-size:64px;line-height:1;}
+.ww-night-panel h2{margin:0;font-size:20px;color:var(--gold);}
+.ww-night-text{font-size:14px;color:var(--text-dim);line-height:1.8;max-width:320px;}
+
+.ww-night-day-actions{display:flex;flex-direction:column;gap:10px;}

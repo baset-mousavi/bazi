@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="css/imposter.css">
 <link rel="stylesheet" href="css/bomb.css">
 <link rel="stylesheet" href="css/guess.css">
+<link rel="stylesheet" href="css/werewolf.css">
 <script data-goatcounter="https://juju-games.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -74,6 +75,13 @@
         <div class="game-poster-overlay">
           <div class="game-poster-title">حدس بزن</div>
           <div class="game-poster-sub">Guess it</div>
+        </div>
+      </div>
+      <div class="game-poster" id="tile-werewolf">
+        <img class="game-poster-img" src="werwolf_cover.png" alt="">
+        <div class="game-poster-overlay">
+          <div class="game-poster-title">گرگ کیه؟</div>
+          <div class="game-poster-sub">Werewolf</div>
         </div>
       </div>
     </div>
@@ -306,6 +314,83 @@
     <button class="btn btn-secondary" id="btn-guess-back-setup">🔙 بازگشت</button>
   </div>
 
+  <!-- WEREWOLF SETUP -->
+  <div class="screen" id="screen-werewolf-setup">
+    <button type="button" class="back-link" id="btn-werewolf-back-games">‹ بازگشت</button>
+
+    <div class="panel settings-group">
+      <div class="row">
+        <div class="row-left">
+          <span class="row-icon">👤</span>
+          <span class="row-label">بازیکنان</span>
+        </div>
+        <div class="stepper">
+          <button type="button" id="btn-ww-players-minus">−</button>
+          <div class="val" id="ww-val-players">8</div>
+          <button type="button" id="btn-ww-players-plus">+</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-left">
+          <span class="row-icon">🐺</span>
+          <span class="row-label">گرگینه‌ها</span>
+        </div>
+        <div class="stepper">
+          <button type="button" id="btn-ww-wolves-minus">−</button>
+          <div class="val" id="ww-val-wolves">2</div>
+          <button type="button" id="btn-ww-wolves-plus">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel settings-group" id="ww-role-list"></div>
+
+    <div class="hint-note" id="ww-slots-note"></div>
+
+    <button class="btn btn-primary" id="btn-werewolf-start">🐺 شروع</button>
+  </div>
+
+  <!-- WEREWOLF REVEAL -->
+  <div class="screen" id="screen-werewolf-reveal">
+    <div class="turn-indicator">
+      <b id="ww-reveal-player-name">بازیکن ۱</b>
+    </div>
+    <div class="progress-dots" id="ww-progress-dots"></div>
+
+    <div class="reveal-card" id="ww-reveal-card">
+      <div class="card-back" id="ww-card-back">
+        <div class="role-text">نقش تو</div>
+        <div class="role-word" id="ww-role-word">؟؟؟</div>
+        <div class="role-hint" id="ww-role-hint"></div>
+      </div>
+      <div class="card-front" id="ww-card-front">
+        <img class="card-front-img" src="heuschrecke.jpg" alt="">
+        <div class="card-front-overlay">
+          <div class="swipe-hint"><span class="arrow">👉</span> برای دیدن نقش به راست بکش</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint-note">فقط همین بازیکن به صفحه نگاه کند 👀</div>
+
+    <button class="btn btn-primary" id="btn-ww-next-player" disabled>بازیکن بعدی</button>
+  </div>
+
+  <!-- WEREWOLF NIGHT GUIDE -->
+  <div class="screen" id="screen-werewolf-night">
+    <div class="panel ww-night-panel">
+      <div class="ww-night-icon" id="ww-night-icon">🌙</div>
+      <h2 id="ww-night-title">همه چشماشونو ببندن</h2>
+      <div class="ww-night-text" id="ww-night-text"></div>
+    </div>
+
+    <button class="btn btn-primary" id="btn-ww-night-next">بعدی</button>
+    <div class="ww-night-day-actions" id="ww-night-day-actions" style="display:none;">
+      <button class="btn btn-primary" id="btn-ww-next-night">🌙 شب بعد</button>
+      <button class="btn btn-secondary" id="btn-ww-night-back">🔙 بازگشت</button>
+    </div>
+  </div>
+
   <div class="footer-note">نسخه‌ی آزمایشی — Juju Games</div>
 </div>
 
@@ -332,6 +417,7 @@
 <script src="js/imposter.js"></script>
 <script src="js/bomb.js"></script>
 <script src="js/guess.js"></script>
+<script src="js/werewolf.js"></script>
 <script>
   if('serviceWorker' in navigator){
     window.addEventListener('load', function(){

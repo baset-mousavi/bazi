@@ -178,11 +178,11 @@
     position:relative;
     min-height:400px;
     border-radius:26px;
+    overflow:hidden;
     border:1px solid rgba(224,179,79,.2);
     box-shadow:0 10px 30px rgba(0,0,0,.35);
     display:flex;align-items:center;justify-content:center;
     background:linear-gradient(160deg,#1c1418,#0d0808);
-    padding:24px;
     text-align:center;
     transition:background .3s;
   }
@@ -197,14 +197,24 @@
     60%{transform:translateX(-6px);}
     80%{transform:translateX(6px);}
   }
-  .bomb-category-label{font-size:13px;color:var(--text-dim);}
-  .bomb-category-value{font-size:26px;font-weight:800;color:var(--gold);margin:6px 0 18px;}
-  .bomb-icon{font-size:90px;animation:bombPulse 1s ease-in-out infinite;}
-  @keyframes bombPulse{
-    0%,100%{transform:scale(1);}
-    50%{transform:scale(1.08);}
+  .bomb-armed{position:relative;width:100%;height:100%;min-height:400px;}
+  .bomb-armed-img{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    object-fit:cover;
+    display:block;
   }
-  .bomb-instructions{font-size:14px;color:var(--text-dim);margin-top:18px;line-height:1.8;}
+  .bomb-armed-overlay{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+    padding:24px;
+    text-align:center;
+    background:linear-gradient(to top, rgba(0,0,0,.88), rgba(0,0,0,.15) 55%, rgba(0,0,0,.4));
+  }
+  .bomb-category-label{font-size:13px;color:rgba(255,255,255,.75);}
+  .bomb-category-value{font-size:26px;font-weight:800;color:var(--gold);margin:6px 0 18px;}
+  .bomb-instructions{font-size:14px;color:rgba(255,255,255,.8);line-height:1.8;}
+  .bomb-exploded{padding:24px;}
   .bomb-boom-icon{font-size:110px;}
   .bomb-boom-text{font-size:34px;font-weight:800;color:var(--danger);margin-top:8px;}
   .bomb-boom-sub{font-size:14px;color:var(--text-dim);margin-top:10px;}
@@ -755,10 +765,10 @@
   <div class="screen" id="screen-bomb-play">
     <div class="bomb-card" id="bomb-card">
       <div class="bomb-armed" id="bomb-armed">
-        <div>
+        <img class="bomb-armed-img" src="bomb.jpg" alt="">
+        <div class="bomb-armed-overlay">
           <div class="bomb-category-label">دسته:</div>
           <div class="bomb-category-value" id="bomb-category-value">—</div>
-          <div class="bomb-icon">💣</div>
           <div class="bomb-instructions">یک کلمه در این دسته بگو و<br>سریع گوشی را به نفر بعدی بده!</div>
         </div>
       </div>

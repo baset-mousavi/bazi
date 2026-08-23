@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>JUJU GAMES</title>
+<title>جوجو گیمز | جاسوس (Imposter)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Estedad:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
     --text:#f3f7f6;
     --text-dim:#9fc2c6;
     --danger:#e1553f;
-    --safe:#f2994a;
+    --safe:#2fae82;
     --radius:22px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -405,7 +405,7 @@
     padding:24px;
     background:linear-gradient(160deg,#123244,#081726);
   }
-  .card-back.is-citizen{background:linear-gradient(160deg,#4a2f0f,#2a1704);}
+  .card-back.is-citizen{background:linear-gradient(160deg,#123d33,#07211a);}
   .card-back.is-citizen .role-word{color:var(--safe);}
   .card-back.is-imposter{background:linear-gradient(160deg,#4a1522,#250a12);}
   .card-back.is-imposter .role-word{color:var(--danger);}
@@ -421,7 +421,7 @@
     inset:0;
     cursor:grab;
     touch-action:none;
-    background:radial-gradient(circle at 50% 25%, var(--card-light), var(--card) 75%);
+    background:radial-gradient(circle at 50% 25%, #e88a3a, #b8621f 75%);
   }
   .card-front.snap-back{transition:transform .35s cubic-bezier(.2,.8,.2,1);}
   .card-front-img{
@@ -673,7 +673,7 @@
     </div>
 
     <div class="panel">
-      <h2></h2>زمان</h2>
+      <h2>زمان</h2>
       <div class="chip-group" id="timer-chips"></div>
     </div>
 
@@ -1327,6 +1327,7 @@
   });
 
   // ---------- BOMB GAME ----------
+  var BOMB_RANDOM = '🎲 تصادفی';
   var BOMB_CATEGORIES = ['حیوانات','میوه‌ها','رنگ‌ها','کشورها','شهرهای ایران','ورزش‌ها','غذاها','خواننده‌ها','فیلم‌ها','مشاغل','اسم پسر','اسم دختر','لوازم خانه','فوتبالیست‌ها'];
   var BOMB_FUSES = [
     { key:'short',  label:'کوتاه',    min:12, max:22 },
@@ -1334,7 +1335,7 @@
     { key:'long',   label:'طولانی',   min:40, max:70 }
   ];
   var bombState = {
-    category: BOMB_CATEGORIES[0],
+    category: BOMB_RANDOM,
     fuseKey: 'medium',
     timeoutHandle: null
   };
@@ -1350,7 +1351,8 @@
 
   function renderBombCategoryChips(){
     bombEls.categoryChips.innerHTML = '';
-    BOMB_CATEGORIES.forEach(function(cat){
+    var options = [BOMB_RANDOM].concat(BOMB_CATEGORIES);
+    options.forEach(function(cat){
       var chip = document.createElement('div');
       chip.className = 'chip' + (cat === bombState.category ? ' active' : '');
       chip.textContent = cat;
@@ -1382,7 +1384,10 @@
   }
 
   function startBombRound(){
-    bombEls.categoryValue.textContent = bombState.category;
+    var displayCategory = (bombState.category === BOMB_RANDOM)
+      ? BOMB_CATEGORIES[Math.floor(Math.random() * BOMB_CATEGORIES.length)]
+      : bombState.category;
+    bombEls.categoryValue.textContent = displayCategory;
     bombEls.armed.style.display = '';
     bombEls.exploded.style.display = 'none';
     bombEls.card.classList.remove('boom');

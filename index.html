@@ -56,12 +56,11 @@
   <div class="screen" id="screen-setup">
     <button type="button" class="back-link" id="btn-back-games">‹ بازگشت</button>
 
-    <div class="panel">
-      <h2>تعداد بازیکن‌ها</h2>
+    <div class="panel settings-group">
       <div class="row">
-        <div>
-          <div class="label">بازیکنان</div>
-          <div class="sub">حداقل ۳ نفر</div>
+        <div class="row-left">
+          <span class="row-icon">👤</span>
+          <span class="row-label">بازیکنان</span>
         </div>
         <div class="stepper">
           <button type="button" id="btn-players-minus">−</button>
@@ -70,9 +69,9 @@
         </div>
       </div>
       <div class="row">
-        <div>
-          <div class="label">تعداد جاسوس‌ها</div>
-          <div class="sub">حداکثر بر اساس تعداد بازیکنان</div>
+        <div class="row-left">
+          <span class="row-icon">🕵️</span>
+          <span class="row-label">جاسوس‌ها</span>
         </div>
         <div class="stepper">
           <button type="button" id="btn-imp-minus">−</button>
@@ -80,30 +79,31 @@
           <button type="button" id="btn-imp-plus">+</button>
         </div>
       </div>
-    </div>
-
-    <div class="panel" id="btn-open-names" role="button" style="cursor:pointer;">
-      <div class="row" style="margin-bottom:0;">
-        <div>
-          <div class="label">👥 بازیکن‌ها</div>
-          <div class="sub">اسم‌ها را وارد کن (اختیاری)</div>
+      <div class="row row-clickable" id="btn-open-names" role="button">
+        <div class="row-left">
+          <span class="row-icon">👥</span>
+          <span class="row-label">اسم بازیکن‌ها</span>
         </div>
         <span class="names-open-arrow">‹</span>
       </div>
-    </div>
-
-    <div class="panel panel-compact" id="hint-panel">
-      <div class="row" style="margin-bottom:0;">
-        <div class="label">💡 راهنما برای جاسوس</div>
-        <div class="toggle on" id="toggle-hint"><div class="dot"></div></div>
+      <div id="hint-panel">
+        <div class="row hint-panel-row">
+          <div class="row-left">
+            <span class="row-icon">💡</span>
+            <span class="row-label">راهنما برای جاسوس</span>
+          </div>
+          <div class="toggle on" id="toggle-hint"><div class="dot"></div></div>
+        </div>
+        <div class="hint-panel-desc" id="hint-panel-desc">یک کلمه‌ی مرتبط (نه خود کلمه) به جاسوس کمک می‌کند</div>
       </div>
-      <div class="hint-panel-desc" id="hint-panel-desc">یک کلمه‌ی مرتبط (نه خود کلمه) به جاسوس کمک می‌کند</div>
     </div>
 
     <div class="panel">
-      <h2>زمان</h2>
+      <h2>⏰ زمان</h2>
       <div class="chip-group" id="timer-chips"></div>
     </div>
+
+    <div class="hint-note">تنظیمات رو انتخاب کن؛ بعد نوبت هر بازیکن می‌رسه کارتش رو ببینه و بازی شروع می‌شه</div>
 
     <button class="btn btn-primary" id="btn-start">
       🎭 شروع

@@ -205,6 +205,21 @@ body{
 .row .label{font-size:15px;font-weight:600;color:var(--text);}
 .row .sub{font-size:12px;color:var(--text-dim);margin-top:2px;}
 
+/* Grouped settings list — several .row items in one card, hairline dividers
+   between them (each row already carries an icon + label via .row-left). */
+.settings-group > .row{
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.settings-group > .row:last-child{
+  padding-bottom:0;
+  border-bottom:none;
+}
+.row-left{display:flex;align-items:center;gap:10px;min-width:0;}
+.row-icon{font-size:17px;flex:0 0 auto;line-height:1;}
+.row-left .row-label{font-size:15px;font-weight:600;color:var(--text);}
+.row-clickable{cursor:pointer;}
+
 .stepper{
   display:flex;
   align-items:center;

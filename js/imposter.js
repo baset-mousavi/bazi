@@ -11,7 +11,6 @@
     tileId: 'tile-imposter',
     title: '🎭 جاسوس <span class="en-sub">(Imposter)</span>',
     setupScreen: 'setup',
-    showInfo: true,
     infoHtml: 'هر بازیکن به نوبت یک <b>کلمه یا جمله کوتاه</b> درباره‌ی کلمه‌ی مخفی می‌گوید، ' +
       'بدون اینکه مستقیم آن را لو بدهد.<br><br>' +
       'جاسوس‌ها باید خودشان را جا بزنند و کلمه را حدس بزنند.<br><br>' +
@@ -48,7 +47,7 @@
     nature:    { w:"پدیده‌ی طبیعی", p:"Pdide-ye Tabi'i · Nature",    e:"🌦️" }
   };
 
-  var TIMER_OPTIONS = [1,2,3,5,8];
+  var TIMER_OPTIONS = [1,2,3,5,8,10,15,20];
 
   // ---------- STATE ----------
   var state = {
@@ -156,9 +155,17 @@
     });
   }
 
-  el.toggleHint.addEventListener('click', function(){
+  el.toggleHint.addEventListener('click', function(e){
+    e.stopPropagation();
     state.showHintToImposter = !state.showHintToImposter;
     el.toggleHint.classList.toggle('on', state.showHintToImposter);
+  });
+
+  // clicking the panel (but not the toggle itself) shows/hides the explanation
+  var hintPanel = document.getElementById('hint-panel');
+  var hintPanelDesc = document.getElementById('hint-panel-desc');
+  hintPanel.addEventListener('click', function(){
+    hintPanelDesc.classList.toggle('open');
   });
 
   // ---------- player cover images (Spieler1.jpg .. Spieler8.jpg, no repeat until all used) ----------

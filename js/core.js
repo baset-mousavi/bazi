@@ -26,15 +26,20 @@ window.Juju = (function(){
       el.screens[k].classList.toggle('active', k === name);
     });
     el.appChrome.style.display = (name === 'home') ? 'none' : 'block';
+    updateInfoButtonVisibility(name);
     document.dispatchEvent(new CustomEvent('juju:screenchange', { detail: { screen: name } }));
     window.scrollTo(0,0);
+  }
+
+  // the info button only makes sense on a game's own setup/settings screen
+  function updateInfoButtonVisibility(screenName){
+    var g = activeGame && games[activeGame];
+    el.btnInfo.style.display = (g && g.infoHtml && screenName === g.setupScreen) ? '' : 'none';
   }
 
   function setActiveGame(id, titleHtml){
     activeGame = id;
     el.gameTitleText.innerHTML = titleHtml;
-    var g = id && games[id];
-    el.btnInfo.style.display = (g && g.showInfo) ? '' : 'none';
   }
 
   function goToGames(){
@@ -42,7 +47,7 @@ window.Juju = (function(){
     showScreen('games');
   }
 
-  // opts: { tileId, title, setupScreen, infoHtml, showInfo }
+  // opts: { tileId, title, setupScreen, infoHtml }
   function registerGame(id, opts){
     games[id] = opts;
     var tile = document.getElementById(opts.tileId);

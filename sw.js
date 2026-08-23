@@ -1,5 +1,7 @@
 // Bumping CACHE_NAME invalidates all previously cached files on next visit.
-var CACHE_NAME = 'juju-games-v2';
+var CACHE_NAME = 'juju-games-v3';
+
+var IMAGE_EXT = /\.(png|jpg|jpeg|gif|webp)$/i;
 
 var PRECACHE_URLS = [
   './',
@@ -49,22 +51,40 @@ self.addEventListener('activate', function(event){
   self.clients.claim();
 });
 
-// cache-first for our own files, network-first (no caching) for everything else (e.g. Google Fonts)
 self.addEventListener('fetch', function(event){
   var req = event.request;
-  if(req.method !== 'GET' || new URL(req.url).origin !== self.location.origin){
+  var url = new URL(req.url);
+  if(req.method !== 'GET' || url.origin !== self.location.origin){
     return;
   }
+
+  // Images almost never change once published, so cache-first (instant,
+  // works offline) is safe and saves bandwidth.
+  if(IMAGE_EXT.test(url.pathname)){
+    event.respondWith(
+      caches.match(req).then(function(cached){
+        if(cached) return cached;
+        return fetch(req).then(function(res){
+          var copy = res.clone();
+          caches.open(CACHE_NAME).then(function(cache){ cache.put(req, copy); });
+          return res;
+        });
+      })
+    );
+    return;
+  }
+
+  // App shell (html/css/js/manifest) changes over time, so always try the
+  // network first — a stale cached copy here would silently hide every
+  // future update (that's what happened before this file existed with
+  // this strategy). Cache is only a fallback for offline play.
   event.respondWith(
-    caches.match(req).then(function(cached){
-      if(cached) return cached;
-      return fetch(req).then(function(res){
-        var copy = res.clone();
-        caches.open(CACHE_NAME).then(function(cache){ cache.put(req, copy); });
-        return res;
-      }).catch(function(){
-        return cached;
-      });
+    fetch(req).then(function(res){
+      var copy = res.clone();
+      caches.open(CACHE_NAME).then(function(cache){ cache.put(req, copy); });
+      return res;
+    }).catch(function(){
+      return caches.match(req);
     })
   );
 });

@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/imposter.css">
 <link rel="stylesheet" href="css/bomb.css">
+<link rel="stylesheet" href="css/guess.css">
 <script data-goatcounter="https://juju-games.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -66,6 +67,13 @@
         <div class="game-poster-overlay">
           <div class="game-poster-title">بمب</div>
           <div class="game-poster-sub">Bomb</div>
+        </div>
+      </div>
+      <div class="game-poster" id="tile-guess">
+        <img class="game-poster-img" src="guess_cover.jpg" alt="">
+        <div class="game-poster-overlay">
+          <div class="game-poster-title">حدس بزن</div>
+          <div class="game-poster-sub">Guess it</div>
         </div>
       </div>
     </div>
@@ -220,6 +228,66 @@
     <button class="btn btn-ghost" id="btn-bomb-back-setup">🔙 بازگشت</button>
   </div>
 
+  <!-- GUESS-IT SETUP -->
+  <div class="screen" id="screen-guess-setup">
+    <button type="button" class="back-link" id="btn-guess-back-games">‹ بازگشت</button>
+
+    <div class="panel">
+      <h2>دسته‌بندی</h2>
+      <div class="chip-group" id="guess-category-chips"></div>
+    </div>
+
+    <div class="panel">
+      <h2>⏰ زمان هر دور</h2>
+      <div class="chip-group" id="guess-timer-chips"></div>
+    </div>
+
+    <div class="hint-note">گوشی رو روی پیشونیت بگیر، رو به بقیه. بچرخونش پایین اگه درست حدس زدن، بالا اگه رد کنی</div>
+
+    <button class="btn btn-primary" id="btn-guess-start">🤔 شروع</button>
+  </div>
+
+  <!-- GUESS-IT COUNTDOWN -->
+  <div class="screen" id="screen-guess-countdown">
+    <div class="panel guess-countdown-wrap">
+      <div class="guess-countdown-num" id="guess-countdown-num">۳</div>
+      <div class="guess-countdown-note">گوشی رو بگیر جلوی پیشونیت، صفحه رو به بقیه 🤳</div>
+    </div>
+  </div>
+
+  <!-- GUESS-IT PLAY -->
+  <div class="screen" id="screen-guess-play">
+    <div class="guess-topbar">
+      <div class="guess-score" id="guess-score">✅ ۰</div>
+      <div class="guess-clock" id="guess-clock">۰۰:۳۰</div>
+    </div>
+
+    <div class="guess-card" id="guess-card">
+      <div class="guess-card-category" id="guess-card-category">عمومی</div>
+      <div class="guess-card-word" id="guess-card-word">—</div>
+    </div>
+
+    <div class="guess-actions">
+      <button type="button" class="guess-action-btn guess-skip" id="btn-guess-skip">⏭️<span>رد کن</span></button>
+      <button type="button" class="guess-action-btn guess-correct" id="btn-guess-correct">✅<span>درست بود</span></button>
+    </div>
+
+    <div class="hint-note">یا گوشی رو بچرخون: پایین = درست، بالا = رد</div>
+
+    <button class="btn btn-ghost" id="btn-guess-end-early">🏁 پایان زودهنگام</button>
+  </div>
+
+  <!-- GUESS-IT RESULTS -->
+  <div class="screen" id="screen-guess-results">
+    <div class="panel">
+      <h2 id="guess-results-heading">نتیجه</h2>
+      <div class="guess-result-list" id="guess-result-list"></div>
+    </div>
+
+    <button class="btn btn-primary" id="btn-guess-play-again">🔁 دور جدید</button>
+    <button class="btn btn-secondary" id="btn-guess-back-setup">🔙 بازگشت</button>
+  </div>
+
   <div class="footer-note">نسخه‌ی آزمایشی — Juju Games</div>
 </div>
 
@@ -245,6 +313,7 @@
 <script src="js/core.js"></script>
 <script src="js/imposter.js"></script>
 <script src="js/bomb.js"></script>
+<script src="js/guess.js"></script>
 <script>
   if('serviceWorker' in navigator){
     window.addEventListener('load', function(){

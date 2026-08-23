@@ -1,5 +1,5 @@
 // Bumping CACHE_NAME invalidates all previously cached files on next visit.
-var CACHE_NAME = 'juju-games-v1';
+var CACHE_NAME = 'juju-games-v2';
 
 var PRECACHE_URLS = [
   './',
@@ -8,6 +8,7 @@ var PRECACHE_URLS = [
   'css/base.css',
   'css/imposter.css',
   'css/bomb.css',
+  'js/install-prompt.js',
   'js/core.js',
   'js/imposter.js',
   'js/bomb.js',

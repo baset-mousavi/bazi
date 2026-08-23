@@ -20,6 +20,15 @@
 <link rel="stylesheet" href="css/bomb.css">
 </head>
 <body>
+<div class="install-banner" id="install-banner">
+  <div class="install-banner-icon">📲</div>
+  <div class="install-banner-body">
+    <div class="install-banner-text" id="install-banner-text"></div>
+  </div>
+  <button type="button" class="install-banner-action" id="install-banner-action" style="display:none;">نصب</button>
+  <button type="button" class="install-banner-close" id="install-banner-close" aria-label="بستن">✕</button>
+</div>
+
 <div class="app">
 
   <!-- HOME SPLASH -->
@@ -230,6 +239,7 @@
   </div>
 </div>
 
+<script src="js/install-prompt.js"></script>
 <script src="js/core.js"></script>
 <script src="js/imposter.js"></script>
 <script src="js/bomb.js"></script>

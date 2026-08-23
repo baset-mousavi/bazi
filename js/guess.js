@@ -92,6 +92,7 @@
     playScreen: document.getElementById('screen-guess-play'),
     score: document.getElementById('guess-score'),
     clock: document.getElementById('guess-clock'),
+    card: document.getElementById('guess-card'),
     cardCategory: document.getElementById('guess-card-category'),
     cardWord: document.getElementById('guess-card-word'),
     btnMute: document.getElementById('btn-guess-mute'),
@@ -154,9 +155,13 @@
   // alternating: tilt down, back to center, tilt down again (or up to skip).
   var TILT_THRESHOLD = 30;
   var TILT_RESET_ZONE = TILT_THRESHOLD * 0.5;
-  var TILT_SETTLE_MS = 400; // grace period so calibration doesn't happen mid-motion
+  var STABILITY_WINDOW_MS = 1500;   // phone must sit still this long before we trust "neutral"
+  var STABILITY_TOLERANCE = 4;      // degrees of wobble still considered "still"
+  var CALIBRATION_TIMEOUT_MS = 4000; // safety net if the phone never settles (or has no sensor)
   var orientationBaseline = null;
-  var orientationReadyAt = 0;
+  var stabilityBuffer = [];
+  var calibrationDeadline = 0;
+  var onCalibrated = null;
   var awaitingNeutral = false;
   var orientationActive = false;
 
@@ -179,11 +184,44 @@
     return e.beta;
   }
 
+  function tryLockBaseline(value){
+    var now = Date.now();
+    stabilityBuffer.push({ t: now, value: value });
+    // Keep at least one entry old enough to still span the window — trimming
+    // down to "<= window" before checking would make the span requirement
+    // nearly impossible to ever satisfy.
+    while(stabilityBuffer.length > 1 && now - stabilityBuffer[1].t >= STABILITY_WINDOW_MS){
+      stabilityBuffer.shift();
+    }
+    var spanned = (now - stabilityBuffer[0].t) >= STABILITY_WINDOW_MS;
+    var pastDeadline = now >= calibrationDeadline;
+
+    if(spanned){
+      var values = stabilityBuffer.map(function(p){ return p.value; });
+      var range = Math.max.apply(null, values) - Math.min.apply(null, values);
+      if(range <= STABILITY_TOLERANCE || pastDeadline){
+        orientationBaseline = values.reduce(function(s,v){ return s+v; }, 0) / values.length;
+      }
+    } else if(pastDeadline){
+      // never got a clean stable window (no sensor, denied permission, etc.) — use whatever we have
+      orientationBaseline = value;
+    }
+
+    if(orientationBaseline !== null && onCalibrated){
+      var cb = onCalibrated;
+      onCalibrated = null;
+      cb();
+    }
+  }
+
   function handleOrientation(e){
     var value = getTiltReading(e);
     if(value === null || value === undefined) return;
-    if(Date.now() < orientationReadyAt) return; // still settling into position, don't calibrate yet
-    if(orientationBaseline === null){ orientationBaseline = value; return; }
+
+    if(orientationBaseline === null){
+      tryLockBaseline(value);
+      return;
+    }
     var delta = value - orientationBaseline;
 
     if(awaitingNeutral){
@@ -207,9 +245,11 @@
     return Promise.resolve(true);
   }
 
-  function attachOrientation(){
+  function attachOrientation(onReady){
     orientationBaseline = null;
-    orientationReadyAt = Date.now() + TILT_SETTLE_MS;
+    stabilityBuffer = [];
+    calibrationDeadline = Date.now() + CALIBRATION_TIMEOUT_MS;
+    onCalibrated = onReady || null;
     awaitingNeutral = false;
     orientationActive = true;
     window.addEventListener('deviceorientation', handleOrientation);
@@ -217,6 +257,7 @@
 
   function detachOrientation(){
     orientationActive = false;
+    onCalibrated = null;
     window.removeEventListener('deviceorientation', handleOrientation);
   }
 
@@ -277,12 +318,67 @@
     return audioCtx;
   }
 
+  // Persian-flavored modal scale ("Hijaz" / Phrygian-dominant — root, b2, 3,
+  // 4, 5, b6, b7), rooted at D3. Fully synthesized, no samples or licensed
+  // audio — a santur-like plucked motif over a low drone, plus a daf/tombak-
+  // style dom/tak percussion pattern.
+  var SCALE_SEMITONES = [0,1,4,5,7,8,10];
+  var ROOT_FREQ = 146.83; // D3
+
+  function scaleFreq(degree, octave){
+    var idx = ((degree % SCALE_SEMITONES.length) + SCALE_SEMITONES.length) % SCALE_SEMITONES.length;
+    return ROOT_FREQ * Math.pow(2, (SCALE_SEMITONES[idx] + 12*(octave||0)) / 12);
+  }
+
+  function pluckNote(ctx, freq, when, level){
+    var osc = ctx.createOscillator();
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+    var filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = freq * 4;
+    var g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, when);
+    g.gain.exponentialRampToValueAtTime(level, when + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, when + 0.5);
+    osc.connect(filter); filter.connect(g); g.connect(ctx.destination);
+    osc.start(when); osc.stop(when + 0.55);
+  }
+
+  function percHit(ctx, kind, when){
+    if(kind === 'dom'){ // low resonant thump
+      var osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(90, when);
+      osc.frequency.exponentialRampToValueAtTime(45, when + 0.15);
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(0.16, when);
+      g.gain.exponentialRampToValueAtTime(0.001, when + 0.22);
+      osc.connect(g); g.connect(ctx.destination);
+      osc.start(when); osc.stop(when + 0.22);
+    } else { // crisp "tak" — filtered noise burst
+      var bufSize = Math.floor(ctx.sampleRate * 0.05);
+      var buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+      var data = buf.getChannelData(0);
+      for(var i=0;i<bufSize;i++){ data[i] = (Math.random()*2-1) * Math.pow(1 - i/bufSize, 2); }
+      var noise = ctx.createBufferSource();
+      noise.buffer = buf;
+      var filt = ctx.createBiquadFilter();
+      filt.type = 'highpass';
+      filt.frequency.value = 2500;
+      var g2 = ctx.createGain();
+      g2.gain.value = 0.07;
+      noise.connect(filt); filt.connect(g2); g2.connect(ctx.destination);
+      noise.start(when);
+    }
+  }
+
   function startBackgroundMusic(){
     if(musicMuted || music) return;
     var ctx = getAudioCtx();
     if(!ctx) return;
 
-    // soft two-note drone (root + fifth) with a slow breathing volume swell
+    // low drone: root + fifth, with a slow breathing volume swell
     var masterGain = ctx.createGain();
     masterGain.gain.value = 0.05;
     masterGain.connect(ctx.destination);
@@ -297,29 +393,34 @@
 
     var osc1 = ctx.createOscillator();
     osc1.type = 'triangle';
-    osc1.frequency.value = 110; // A2
+    osc1.frequency.value = scaleFreq(0, -1); // D2
     var osc2 = ctx.createOscillator();
     osc2.type = 'triangle';
-    osc2.frequency.value = 110 * 1.5; // fifth above
+    osc2.frequency.value = scaleFreq(4, -1); // A2, fifth above
     osc1.connect(masterGain);
     osc2.connect(masterGain);
     osc1.start();
     osc2.start();
 
-    // gentle clock-tick pulse underneath, fitting a timed guessing game
-    var tickHandle = setInterval(function(){
-      var now = ctx.currentTime;
-      var tOsc = ctx.createOscillator();
-      tOsc.type = 'sine';
-      tOsc.frequency.setValueAtTime(1200, now);
-      var tGain = ctx.createGain();
-      tGain.gain.setValueAtTime(0.05, now);
-      tGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-      tOsc.connect(tGain); tGain.connect(ctx.destination);
-      tOsc.start(now); tOsc.stop(now + 0.06);
-    }, 600);
+    // repeating santur-like melodic phrase, one octave above the drone
+    var MELODY_PATTERN = [0,2,1,3,2,4,3,2];
+    var melodyStep = 0;
+    var melodyHandle = setInterval(function(){
+      var degree = MELODY_PATTERN[melodyStep % MELODY_PATTERN.length];
+      melodyStep++;
+      pluckNote(ctx, scaleFreq(degree, 1), ctx.currentTime, 0.06);
+    }, 450);
 
-    music = { osc1: osc1, osc2: osc2, lfo: lfo, tickHandle: tickHandle };
+    // daf/tombak-style dom/tak rhythm, twice the melody's speed
+    var PERC_PATTERN = ['dom','tak','tak','dom','tak','dom','tak','tak'];
+    var percStep = 0;
+    var percHandle = setInterval(function(){
+      var kind = PERC_PATTERN[percStep % PERC_PATTERN.length];
+      percStep++;
+      percHit(ctx, kind, ctx.currentTime);
+    }, 225);
+
+    music = { osc1: osc1, osc2: osc2, lfo: lfo, melodyHandle: melodyHandle, percHandle: percHandle };
   }
 
   function stopBackgroundMusic(){
@@ -327,7 +428,8 @@
     try{ music.osc1.stop(); }catch(e){}
     try{ music.osc2.stop(); }catch(e){}
     try{ music.lfo.stop(); }catch(e){}
-    clearInterval(music.tickHandle);
+    clearInterval(music.melodyHandle);
+    clearInterval(music.percHandle);
     music = null;
   }
 
@@ -372,11 +474,14 @@
     el.score.textContent = '✅ ۰';
     state.timerRemaining = state.roundSeconds;
     renderClock();
-    nextWord();
+    el.card.classList.add('is-calibrating');
     Juju.showScreen('guessPlay');
-    attachOrientation();
-    startTimer();
-    startBackgroundMusic();
+    attachOrientation(function(){
+      el.card.classList.remove('is-calibrating');
+      nextWord();
+      startTimer();
+      startBackgroundMusic();
+    });
   }
 
   function renderClock(){

@@ -46,6 +46,13 @@
   font-size:52px;
   animation:guessRotatePulse 1.6s ease-in-out infinite;
 }
+.guess-rotate-sub{
+  font-size:12.5px;
+  font-weight:500;
+  color:var(--text-dim);
+  max-width:260px;
+  line-height:1.6;
+}
 @keyframes guessRotatePulse{
   0%,100%{transform:rotate(0deg);}
   50%{transform:rotate(90deg);}
@@ -56,6 +63,7 @@
 }
 /* play screen's rotate-hint sits on white, not the dark app background */
 #screen-guess-play .guess-rotate-hint{color:#555;}
+#screen-guess-play .guess-rotate-sub{color:#888;}
 
 /* Countdown content */
 .guess-countdown-inner{
@@ -176,6 +184,16 @@
   line-height:1.25;
   max-width:90%;
 }
+
+.guess-calibrating-note{
+  display:none;
+  font-size:22px;
+  font-weight:700;
+  color:#333;
+}
+.guess-card.is-calibrating .guess-calibrating-note{display:block;}
+.guess-card.is-calibrating .guess-card-category,
+.guess-card.is-calibrating .guess-card-word{display:none;}
 
 #screen-guess-play.flash-correct .guess-icon-btn,
 #screen-guess-play.flash-skip .guess-icon-btn{

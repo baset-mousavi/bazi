@@ -247,9 +247,13 @@
     <button class="btn btn-primary" id="btn-guess-start">🤔 شروع</button>
   </div>
 
-  <!-- GUESS-IT COUNTDOWN -->
-  <div class="screen" id="screen-guess-countdown">
-    <div class="panel guess-countdown-wrap">
+  <!-- GUESS-IT COUNTDOWN (fullscreen, landscape) -->
+  <div class="screen guess-fullscreen-screen" id="screen-guess-countdown">
+    <div class="guess-rotate-hint">
+      <div class="guess-rotate-icon">🔄</div>
+      <div>گوشی رو افقی بگیر</div>
+    </div>
+    <div class="guess-fullscreen-inner guess-countdown-inner">
       <div class="guess-countdown-num" id="guess-countdown-num">۳</div>
       <div class="guess-countdown-note">گوشی رو بگیر جلوی پیشونیت، صفحه رو به بقیه 🤳</div>
       <div class="guess-tilt-hints">
@@ -265,26 +269,32 @@
     </div>
   </div>
 
-  <!-- GUESS-IT PLAY -->
-  <div class="screen" id="screen-guess-play">
-    <div class="guess-topbar">
-      <div class="guess-score" id="guess-score">✅ ۰</div>
-      <div class="guess-clock" id="guess-clock">۰۰:۳۰</div>
+  <!-- GUESS-IT PLAY (fullscreen, landscape, word fills the screen) -->
+  <div class="screen guess-fullscreen-screen" id="screen-guess-play">
+    <div class="guess-rotate-hint">
+      <div class="guess-rotate-icon">🔄</div>
+      <div>گوشی رو افقی بگیر</div>
     </div>
+    <div class="guess-fullscreen-inner">
+      <div class="guess-topbar">
+        <button type="button" class="guess-icon-btn" id="btn-guess-end-early" aria-label="پایان">✕</button>
+        <div class="guess-topbar-center">
+          <div class="guess-score" id="guess-score">✅ ۰</div>
+          <div class="guess-clock" id="guess-clock">۰۰:۳۰</div>
+        </div>
+        <button type="button" class="guess-icon-btn" id="btn-guess-mute" aria-label="صدا">🔊</button>
+      </div>
 
-    <div class="guess-card" id="guess-card">
-      <div class="guess-card-category" id="guess-card-category">عمومی</div>
-      <div class="guess-card-word" id="guess-card-word">—</div>
+      <div class="guess-card" id="guess-card">
+        <div class="guess-card-category" id="guess-card-category">عمومی</div>
+        <div class="guess-card-word" id="guess-card-word">—</div>
+      </div>
+
+      <div class="guess-actions">
+        <button type="button" class="guess-action-btn guess-skip" id="btn-guess-skip">⏭️<span>رد کن</span></button>
+        <button type="button" class="guess-action-btn guess-correct" id="btn-guess-correct">✅<span>درست بود</span></button>
+      </div>
     </div>
-
-    <div class="guess-actions">
-      <button type="button" class="guess-action-btn guess-skip" id="btn-guess-skip">⏭️<span>رد کن</span></button>
-      <button type="button" class="guess-action-btn guess-correct" id="btn-guess-correct">✅<span>درست بود</span></button>
-    </div>
-
-    <div class="hint-note">یا گوشی رو بچرخون: پایین = درست، بالا = رد</div>
-
-    <button class="btn btn-ghost" id="btn-guess-end-early">🏁 پایان زودهنگام</button>
   </div>
 
   <!-- GUESS-IT RESULTS -->

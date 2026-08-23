@@ -89,13 +89,14 @@
 
     countdownNum: document.getElementById('guess-countdown-num'),
 
+    playScreen: document.getElementById('screen-guess-play'),
     score: document.getElementById('guess-score'),
     clock: document.getElementById('guess-clock'),
-    card: document.getElementById('guess-card'),
     cardCategory: document.getElementById('guess-card-category'),
     cardWord: document.getElementById('guess-card-word'),
     btnCorrect: document.getElementById('btn-guess-correct'),
     btnSkip: document.getElementById('btn-guess-skip'),
+    btnMute: document.getElementById('btn-guess-mute'),
 
     resultsHeading: document.getElementById('guess-results-heading'),
     resultList: document.getElementById('guess-result-list')
@@ -203,11 +204,100 @@
     }
     if(e.detail.screen !== 'guessPlay'){
       clearInterval(state.timerHandle);
+      stopBackgroundMusic();
+    }
+  });
+
+  // ---------- background music (synthesized — no audio file, same approach as bomb.js's explosion sound) ----------
+  var MUSIC_MUTED_KEY = 'juju-guess-music-muted';
+  var musicMuted = localStorage.getItem(MUSIC_MUTED_KEY) === '1';
+  var audioCtx = null;
+  var music = null; // { osc1, osc2, lfo, tickHandle }
+
+  function getAudioCtx(){
+    if(!audioCtx){
+      try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch(e){ audioCtx = null; }
+    }
+    if(audioCtx && audioCtx.state === 'suspended'){
+      try{ audioCtx.resume(); }catch(e){}
+    }
+    return audioCtx;
+  }
+
+  function startBackgroundMusic(){
+    if(musicMuted || music) return;
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+
+    // soft two-note drone (root + fifth) with a slow breathing volume swell
+    var masterGain = ctx.createGain();
+    masterGain.gain.value = 0.05;
+    masterGain.connect(ctx.destination);
+
+    var lfo = ctx.createOscillator();
+    lfo.frequency.value = 0.12;
+    var lfoGain = ctx.createGain();
+    lfoGain.gain.value = 0.025;
+    lfo.connect(lfoGain);
+    lfoGain.connect(masterGain.gain);
+    lfo.start();
+
+    var osc1 = ctx.createOscillator();
+    osc1.type = 'triangle';
+    osc1.frequency.value = 110; // A2
+    var osc2 = ctx.createOscillator();
+    osc2.type = 'triangle';
+    osc2.frequency.value = 110 * 1.5; // fifth above
+    osc1.connect(masterGain);
+    osc2.connect(masterGain);
+    osc1.start();
+    osc2.start();
+
+    // gentle clock-tick pulse underneath, fitting a timed guessing game
+    var tickHandle = setInterval(function(){
+      var now = ctx.currentTime;
+      var tOsc = ctx.createOscillator();
+      tOsc.type = 'sine';
+      tOsc.frequency.setValueAtTime(1200, now);
+      var tGain = ctx.createGain();
+      tGain.gain.setValueAtTime(0.05, now);
+      tGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+      tOsc.connect(tGain); tGain.connect(ctx.destination);
+      tOsc.start(now); tOsc.stop(now + 0.06);
+    }, 600);
+
+    music = { osc1: osc1, osc2: osc2, lfo: lfo, tickHandle: tickHandle };
+  }
+
+  function stopBackgroundMusic(){
+    if(!music) return;
+    try{ music.osc1.stop(); }catch(e){}
+    try{ music.osc2.stop(); }catch(e){}
+    try{ music.lfo.stop(); }catch(e){}
+    clearInterval(music.tickHandle);
+    music = null;
+  }
+
+  function updateMuteButton(){
+    el.btnMute.textContent = musicMuted ? '🔇' : '🔊';
+  }
+  updateMuteButton();
+
+  el.btnMute.addEventListener('click', function(){
+    musicMuted = !musicMuted;
+    localStorage.setItem(MUSIC_MUTED_KEY, musicMuted ? '1' : '0');
+    updateMuteButton();
+    if(musicMuted){
+      stopBackgroundMusic();
+    } else {
+      startBackgroundMusic();
     }
   });
 
   // ---------- play flow ----------
   el.btnStart.addEventListener('click', function(){
+    getAudioCtx(); // unlock audio now, while we still have a user gesture (Safari requirement)
     requestMotionPermission().then(function(){
       state.results = [];
       buildDeck();
@@ -233,6 +323,7 @@
     Juju.showScreen('guessPlay');
     attachOrientation();
     startTimer();
+    startBackgroundMusic();
   }
 
   function renderClock(){
@@ -256,9 +347,9 @@
   function resolveWord(correct){
     state.results.push({ word: state.currentWord, correct: correct });
 
-    el.card.classList.remove('flash-correct','flash-skip');
-    void el.card.offsetWidth; // restart animation/transition cleanly
-    el.card.classList.add(correct ? 'flash-correct' : 'flash-skip');
+    el.playScreen.classList.remove('flash-correct','flash-skip');
+    void el.playScreen.offsetWidth; // restart animation/transition cleanly
+    el.playScreen.classList.add(correct ? 'flash-correct' : 'flash-skip');
 
     if(correct){
       var scoreCount = state.results.filter(function(r){ return r.correct; }).length;
@@ -268,7 +359,7 @@
 
     clearTimeout(state.flashTimeout);
     state.flashTimeout = setTimeout(function(){
-      el.card.classList.remove('flash-correct','flash-skip');
+      el.playScreen.classList.remove('flash-correct','flash-skip');
       nextWord();
     }, 320);
   }
@@ -283,6 +374,7 @@
   function endRound(){
     clearInterval(state.timerHandle);
     detachOrientation();
+    stopBackgroundMusic();
     showResults();
   }
 
